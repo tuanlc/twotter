@@ -1,11 +1,11 @@
 <template>
   <div class="user-profile">
     <div class="user-profile_user-panel">
-      <h1 class="user-profile_username">@{{ user.username }}</h1>
-      <div class="user-profile_admin-badge" v-if="user.isAdmin">Admin</div>
+      <h1 class="user-profile_username">@{{ state.user.username }}</h1>
+      <div class="user-profile_admin-badge" v-if="state.user.isAdmin">Admin</div>
       <div class="user-profile_admin-badge" v-else>Not Admin</div>
       <div class="user-profile_follower-count">
-        <strong>Followers: </strong> {{ followers }}
+        <strong>Followers: </strong> {{ state.followers }}
       </div>
 
       <CreateTwootPanel @add-twoot="createNewTwoot"/>
@@ -13,17 +13,18 @@
     </div>
     <div class="user-profile_twoots-wrapper">
       <TwootItem
-        v-for="twoot in user.twoots"
+        v-for="twoot in state.user.twoots"
         :key="twoot.id"
-        :username="user.username"
+        :username="state.user.username"
         :twoot="twoot"
-        @favorite="toggleFavorite"
       />
     </div>
   </div>
 </template>
 
 <script>
+import { reactive, computed } from 'vue';
+
 import TwootItem from "./TwootItem";
 import CreateTwootPanel from "./CreateTwootPanel";
 
@@ -33,8 +34,8 @@ export default {
     TwootItem,
     CreateTwootPanel
   },
-  data() {
-    return {
+  setup() {
+    const state = reactive({
       followers: 0,
       user: {
         id: 1,
@@ -47,38 +48,29 @@ export default {
           { id: 1, content: "Twotter is amazing!" },
           { id: 2, content: "Don't forget to subscribe to twotter" },
         ],
-      },
-    };
-  },
-  watch: {
-    followers(newCount, oldCount) {
-      if (oldCount < newCount) {
-        console.log(`${this.user.username} has gained a follower`);
       }
-    },
-  },
-  computed: {
-    fullName() {
-      return `${this.user.firstName} ${this.user.lastName}`;
+    });
+
+    const fullName = computed(() => `${state.user.firstName} ${state.user.lastName}`);
+
+    function followUser() {
+      state.followers++;
     }
-  },
-  methods: {
-    followUser() {
-      this.followers++;
-    },
-    toggleFavorite(id) {
-      console.log(`Favorite twoot #${id}`);
-    },
-    createNewTwoot(newTwootContent) {
-      this.user.twoots.unshift({
-        id: this.user.twoots.length + 1,
+
+    function createNewTwoot(newTwootContent) {
+      state.user.twoots.unshift({
+        id: state.user.twoots.length + 1,
         content: newTwootContent
       });
     }
-  },
-  mounted() {
-    this.followUser();
-  },
+
+    return {
+      state,
+      fullName,
+      followUser,
+      createNewTwoot
+    };
+  }
 };
 </script>
 

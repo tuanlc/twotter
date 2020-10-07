@@ -7,21 +7,9 @@
       <div class="user-profile_follower-count">
         <strong>Followers: </strong> {{ followers }}
       </div>
-      <form class="user-profile__create-twoot" @submit.prevent="createNewTwoot" :class="{ '--exceeded': newTwootCharacterCount > 180 }">
-        <label for="newTwoot"><strong>New Twoot</strong> ({{ newTwootCharacterCount }}/180)</label>
-        <textarea id="newTwoot" rows="4" v-model="newTwootContent" />
 
-        <div class="user-profile__create-twoot-type">
-          <label for="newTwootType"><strong>Type</strong></label>
-          <select id="newTwootType" v-model="selectedTwootType">
-            <option :value="option.value" v-for="(option, index) in twootTypes" :key="index">
-              {{ option.name }}
-            </option>
-          </select>
-        </div>
+      <CreateTwootPanel @add-twoot="createNewTwoot"/>
 
-        <button>Twoot</button>
-      </form>
     </div>
     <div class="user-profile_twoots-wrapper">
       <TwootItem
@@ -37,20 +25,16 @@
 
 <script>
 import TwootItem from "./TwootItem";
+import CreateTwootPanel from "./CreateTwootPanel";
 
 export default {
   name: "UserProfile",
   components: {
     TwootItem,
+    CreateTwootPanel
   },
   data() {
     return {
-      newTwootContent: '',
-      selectedTwootType: 'instant',
-      twootTypes: [
-        { value: 'draft', name: 'Draft' },
-        { value: 'instant', name: 'Instant Twoot' }
-      ],
       followers: 0,
       user: {
         id: 1,
@@ -76,9 +60,6 @@ export default {
   computed: {
     fullName() {
       return `${this.user.firstName} ${this.user.lastName}`;
-    },
-    newTwootCharacterCount() {
-      return this.newTwootContent.length;
     }
   },
   methods: {
@@ -88,15 +69,11 @@ export default {
     toggleFavorite(id) {
       console.log(`Favorite twoot #${id}`);
     },
-    createNewTwoot() {
-      if (this.newTwootContent && this.selectedTwootType !== 'draft') {
-        this.user.twoots.unshift({
-          id: this.user.twoots.length + 1,
-          content: this.newTwootContent
-        });
-
-        this.newTwootContent = '';
-      }
+    createNewTwoot(newTwootContent) {
+      this.user.twoots.unshift({
+        id: this.user.twoots.length + 1,
+        content: newTwootContent
+      });
     }
   },
   mounted() {
@@ -132,24 +109,6 @@ export default {
       margin-right: auto;
       padding: 0 10px;
       font-weight: bold;
-    }
-
-    .user-profile__create-twoot {
-      padding-top: 20px;
-
-      display: flex;
-      flex-direction: column;
-
-      &.--exceeded {
-        color: red;
-        border-color: red;
-
-        button {
-          background: red;
-          border: none;
-          color: white;
-        }
-      }
     }
   }
 

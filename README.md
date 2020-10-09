@@ -1,5 +1,9 @@
 # twotter
 
+[Demo](https://twoot-vue3-practice.herokuapp.com)
+
+This practice vue3 project follows the tutorial https://www.youtube.com/watch?v=ZqgiuPt5QZo&t=8322s
+
 ## Project setup
 ```
 npm install
@@ -19,6 +23,3 @@ npm run build
 ```
 npm run lint
 ```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).

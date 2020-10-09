@@ -24,9 +24,11 @@
 
 <script>
 import { reactive, computed } from 'vue';
+import { useRoute } from 'vue-router';
 
-import TwootItem from "./TwootItem";
-import CreateTwootPanel from "./CreateTwootPanel";
+import users from '../assets/users';
+import TwootItem from "../components/TwootItem";
+import CreateTwootPanel from "../components/CreateTwootPanel";
 
 export default {
   name: "UserProfile",
@@ -35,20 +37,12 @@ export default {
     CreateTwootPanel
   },
   setup() {
+    const route = useRoute();
+    const userId = computed(() => route.params.userId);
+
     const state = reactive({
       followers: 0,
-      user: {
-        id: 1,
-        username: "TuanLC",
-        firstName: "Tuan",
-        lastName: "LE CONG",
-        email: "tuancnttbk93@gmail.com",
-        isAdmin: true,
-        twoots: [
-          { id: 1, content: "Twotter is amazing!" },
-          { id: 2, content: "Don't forget to subscribe to twotter" },
-        ],
-      }
+      user: users[userId.value - 1] || users[0]
     });
 
     const fullName = computed(() => `${state.user.firstName} ${state.user.lastName}`);
@@ -68,7 +62,8 @@ export default {
       state,
       fullName,
       followUser,
-      createNewTwoot
+      createNewTwoot,
+      userId
     };
   }
 };
